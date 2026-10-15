@@ -1,0 +1,24 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model SysUser {
+  id           Int       @id @default(autoincrement())
+  username     String    @unique @db.VarChar(64)
+  password     String    @db.VarChar(255)
+  nickname     String?   @db.VarChar(100)
+  status       Int       @default(1) @db.TinyInt
+  deleteFlag   Int       @default(0) @map("delete_flag") @db.TinyInt
+  errorCount   Int       @default(0) @map("error_count")
+  lockTime     DateTime? @map("lock_time") @db.DateTime(3)
+  lastLoginTime DateTime? @map("last_login_time") @db.DateTime(3)
+  lastLoginIp  String?   @map("last_login_ip") @db.VarChar(45)
+
+  @@index([status, deleteFlag])
+  @@map("sys_user")
+}
