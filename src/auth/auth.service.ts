@@ -19,14 +19,15 @@ export class AuthService {
   ) {}
 
   async login(dto: LoginDto, ip: string) {
-    const user = await this.prisma.sysUser.findUnique({ where: { username: dto.username } });
+    const db = this.prisma.getClient('devices');
+    const user = await db.sysUser.findUnique({ where: { username: dto.username } });
     if (!user || user.deleteFlag !== 0) throw new UnauthorizedException('用户名或密码错误');
     if (user.status !== 1) throw new UnauthorizedException('账号已禁用');
     if (user.lockTime && user.lockTime > new Date()) throw new UnauthorizedException('账号已锁定，请稍后再试');
 
     const passwordMatches = await bcrypt.compare(dto.password, user.password);
     if (!passwordMatches) {
-      await this.prisma.$executeRaw(Prisma.sql`
+      await db.$executeRaw(Prisma.sql`
         UPDATE sys_user
         SET lock_time = CASE
               WHEN error_count >= ${MAX_LOGIN_ERRORS - 1}
@@ -39,7 +40,7 @@ export class AuthService {
       throw new UnauthorizedException('用户名或密码错误');
     }
 
-    await this.prisma.sysUser.update({
+    await db.sysUser.update({
       where: { id: user.id },
       data: { errorCount: 0, lockTime: null, lastLoginTime: new Date(), lastLoginIp: ip || null },
     });
@@ -49,7 +50,7 @@ export class AuthService {
   }
 
   async getProfile(userId: number) {
-    const user = await this.prisma.sysUser.findUnique({
+    const user = await this.prisma.getClient('devices').sysUser.findUnique({
       where: { id: userId },
       select: { id: true, username: true, nickname: true, status: true, lastLoginTime: true, lastLoginIp: true },
     });

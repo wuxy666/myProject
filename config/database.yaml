@@ -1,0 +1,68 @@
+# Add one entry for each database. The network dashboard uses parameterized
+# read-only SQL against network_monitor; typed models remain in prisma/schema.prisma.
+development:
+  databases:
+    devices:
+      provider: mysql
+      host: "${DB_HOST:-localhost}"
+      port: "${DB_PORT:-3306}"
+      database: "${DB_NAME:-devices}"
+      username: "${DB_USERNAME:-root}"
+      password: "${DB_PASSWORD}"
+      connectionLimit: "${DB_CONNECTION_LIMIT:-10}"
+    networkMonitor:
+      provider: mysql
+      host: "${NETWORK_MONITOR_DB_HOST:-localhost}"
+      port: "${NETWORK_MONITOR_DB_PORT:-3306}"
+      database: "${NETWORK_MONITOR_DB_NAME:-network_monitor}"
+      username: "${NETWORK_MONITOR_DB_USERNAME:-root}"
+      password: "${NETWORK_MONITOR_DB_PASSWORD}"
+      connectionLimit: "${NETWORK_MONITOR_DB_CONNECTION_LIMIT:-5}"
+    # Copy this block and give it a unique name to add another database.
+    # Each key becomes the name passed to PrismaService.getClient(name).
+    # audit:
+    #   provider: mysql
+    #   host: "${AUDIT_DB_HOST:-localhost}"
+    #   port: "${AUDIT_DB_PORT:-3306}"
+    #   database: "${AUDIT_DB_NAME:-audit}"
+    #   username: "${AUDIT_DB_USERNAME:-root}"
+    #   password: "${AUDIT_DB_PASSWORD}"
+    #   connectionLimit: "${AUDIT_DB_CONNECTION_LIMIT:-5}"
+
+test:
+  databases:
+    devices:
+      provider: mysql
+      host: "${TEST_DB_HOST:-localhost}"
+      port: "${TEST_DB_PORT:-3306}"
+      database: "${TEST_DB_NAME:-devices_test}"
+      username: "${TEST_DB_USERNAME:-root}"
+      password: "${TEST_DB_PASSWORD}"
+      connectionLimit: "${TEST_DB_CONNECTION_LIMIT:-5}"
+    networkMonitor:
+      provider: mysql
+      host: "${TEST_NETWORK_MONITOR_DB_HOST:-localhost}"
+      port: "${TEST_NETWORK_MONITOR_DB_PORT:-3306}"
+      database: "${TEST_NETWORK_MONITOR_DB_NAME:-network_monitor_test}"
+      username: "${TEST_NETWORK_MONITOR_DB_USERNAME:-root}"
+      password: "${TEST_NETWORK_MONITOR_DB_PASSWORD}"
+      connectionLimit: "${TEST_NETWORK_MONITOR_DB_CONNECTION_LIMIT:-5}"
+
+production:
+  databases:
+    devices:
+      provider: mysql
+      host: "${PROD_DB_HOST}"
+      port: "${PROD_DB_PORT:-3306}"
+      database: "${PROD_DB_NAME}"
+      username: "${PROD_DB_USERNAME}"
+      password: "${PROD_DB_PASSWORD}"
+      connectionLimit: "${PROD_DB_CONNECTION_LIMIT:-20}"
+    networkMonitor:
+      provider: mysql
+      host: "${PROD_NETWORK_MONITOR_DB_HOST}"
+      port: "${PROD_NETWORK_MONITOR_DB_PORT:-3306}"
+      database: "${PROD_NETWORK_MONITOR_DB_NAME:-network_monitor}"
+      username: "${PROD_NETWORK_MONITOR_DB_USERNAME}"
+      password: "${PROD_NETWORK_MONITOR_DB_PASSWORD}"
+      connectionLimit: "${PROD_NETWORK_MONITOR_DB_CONNECTION_LIMIT:-10}"

@@ -3,12 +3,17 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { loadDatabaseConfig } from './config/database-config';
+import { NetworkDashboardModule } from './dashboard/network-dashboard.module';
+
+const databaseConfig = loadDatabaseConfig();
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
+      load: [() => databaseConfig],
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid('development', 'production', 'test').default('development'),
         PORT: Joi.number().port().default(3000),
@@ -20,6 +25,7 @@ import { PrismaModule } from './prisma/prisma.module';
     }),
     PrismaModule,
     AuthModule,
+    NetworkDashboardModule,
   ],
 })
 export class AppModule {}
